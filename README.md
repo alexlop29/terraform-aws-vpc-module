@@ -48,6 +48,9 @@
 | vpc_tags | Additional tags for the VPC | map(string) | {} | no |
 
 # Outputs
+| Name | Description |
+| - | - |
+| vpc_id | The ID of the VPC |
 
 # License
 See LICENSE for full details. 
