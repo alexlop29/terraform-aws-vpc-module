@@ -1,15 +1,15 @@
 variable "create_vpc" {
   type        = bool
   description = <<-EOT
-    Set to `true` to enable VPC creation
+    Set to true to enable VPC creation
   EOT
   default     = true
 }
 
 variable "use_ipam_pool" {
   type        = bool
-  description = <<-EOT 
-    Set to `true` to enable IPAM for CIDR allocation
+  description = <<-EOT
+    Set to true to enable IPAM for CIDR allocation
   EOT
   default     = false
 }
@@ -82,7 +82,7 @@ variable "ipv6_netmask_length" {
 
 variable "instance_tenancy" {
   type        = string
-  description = <<-EOT 
+  description = <<-EOT
     A tenancy option for instances launched into the VPC
   EOT
   default     = "default"
