@@ -25,4 +25,46 @@ resource "aws_vpc" "main" {
   )
 }
 
+################################
+# Internet Gateway
+################################
+
+resource "aws_internet_gateway" "default" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags,
+    var.vpc_tags,
+  )
+}
+
+################################
+# Security Group
+################################
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags,
+    var.vpc_tags,
+  )
+}
+
+################################
+# Route Table
+################################
+
+resource "aws_default_route_table" "default" {
+  default_route_table_id = aws_vpc.main.default_route_table_id
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags,
+    var.vpc_tags,
+  )
+}
+
 

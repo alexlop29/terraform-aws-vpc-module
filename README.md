@@ -26,7 +26,9 @@
 | Name | Type |
 | - | - |
 | [aws_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
-
+| [aws_default_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_security_group) | resource |
+| [aws_default_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_route_table) | resource |
+| [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 
 # Inputs
 | Name | Description | Type | Default | Required |
@@ -56,4 +58,7 @@
 # License
 See LICENSE for full details. 
 
-# About
+# Notes from Alex
+- Follows best practices regarding Security Groups (SGs); See https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3
+
+- Go back and add version specific docs in resources
