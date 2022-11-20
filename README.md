@@ -51,6 +51,7 @@
 | Name | Description |
 | - | - |
 | vpc_id | The ID of the VPC |
+| vpc_arn | Amazon Resource Name (ARN) of VPC |
 
 # License
 See LICENSE for full details. 
