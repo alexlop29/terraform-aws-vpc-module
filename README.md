@@ -1,5 +1,8 @@
 # terraform-aws-vpc
 
+## Scope
+- `terraform-aws-vpc` aides in provisioning an IPv4-based VPC. It does not provide the necessary functionality to build an IPv6-based VPC. The feature can be included upon request.
+
 # Security & Compliance
 
 # Examples
@@ -38,10 +41,6 @@
 | ipv4_primary_cidr_block | The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length | string | null | no |
 | ipv4_ipam_pool_id | The ID of an IPv4 IPAM pool you want to use for allocating this VPC's CIDR. | string | null | no |
 | ipv4_netmask_length | The netmask length of the IPv4 CIDR you want to allocate to this VPC. Requires specifying a ipv4_ipam_pool_id. | number | null | no |
-| enable_ipv6 | Set to true to request an Amazon-provided IPv6 CIDR block with a /56 prefix length | boolean | false | no |
-| ipv6_cidr | IPv6 CIDR block to request from an IPAM Pool. Can be set explicitly or derived from IPAM using ipv6_netmask_length | string | null | no |
-| ipv6_ipam_pool_id |  IPAM Pool ID for a IPv6 pool. Conflicts with assign_generated_ipv6_cidr_block | string | null | no |
-| ipv6_netmask_length | Netmask length to request from IPAM Pool. Conflicts with ipv6_cidr_block. This can be omitted if IPAM pool as a allocation_default_netmask_length set. Valid values: 56 | number | null | no |
 | instance_tenancy | A tenancy option for instances launched into the VPC | string | default | no |
 | enable_dns_hostnames | A boolean flag to enable/disable DNS hostnames in the VPC | boolean | false | no |
 | enable_dns_support | A boolean flag to enable/disable DNS support in the VPC | boolean | true | no |

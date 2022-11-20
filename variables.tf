@@ -43,43 +43,6 @@ variable "ipv4_netmask_length" {
   default     = null
 }
 
-variable "enable_ipv6" {
-  type        = bool
-  description = <<-EOT
-    Set to `true` to request an Amazon-provided IPv6 CIDR block with a /56 prefix length
-  EOT
-  default     = false
-}
-
-variable "ipv6_cidr" {
-  type        = string
-  description = <<-EOT
-    IPv6 CIDR block to request from an IPAM Pool. 
-    Can be set explicitly or derived from IPAM using 
-    ipv6_netmask_length
-  EOT
-  default     = null
-}
-
-variable "ipv6_ipam_pool_id" {
-  type        = string
-  description = <<-EOT
-    IPAM Pool ID for a IPv6 pool. 
-    Conflicts with assign_generated_ipv6_cidr_block
-  EOT
-  default     = null
-}
-
-variable "ipv6_netmask_length" {
-  type        = number
-  description = <<-EOT
-    Netmask length to request from IPAM Pool. 
-    Conflicts with ipv6_cidr_block. 
-    Valid values: 56
-  EOT
-  default     = null
-}
-
 variable "instance_tenancy" {
   type        = string
   description = <<-EOT
