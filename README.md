@@ -2,6 +2,7 @@
 
 ## Scope
 - `terraform-aws-vpc` aides in provisioning an IPv4-based VPC. It does not provide the necessary functionality to build an IPv6-based VPC. The feature can be included upon request.
+- `terraform-aws-vpc` does not support IPAM. The feature can be included upon request.
 
 # Security & Compliance
 
@@ -43,8 +44,6 @@
 | enable_dns_hostnames | A boolean flag to enable/disable DNS hostnames in the VPC | boolean | false | no |
 | enable_dns_support | A boolean flag to enable/disable DNS support in the VPC | boolean | true | no |
 | name | Name to be used on all the resources as identifier | string | "" | no |
-| tags | A map of tags to add to all resources | map(string) | {} | no |
-| vpc_tags | Additional tags for the VPC | map(string) | {} | no |
 
 # Outputs
 | Name | Description |
@@ -62,3 +61,11 @@ See LICENSE for full details.
 - Follows best practices regarding Security Groups (SGs); See https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3
 
 - Go back and add version-specific docs in resources.
+
+- Update the tagging strategy in the module.
+
+- Update the README resources and inputs
+
+- Add VPC Flow Logs
+
+- Test connectivity with AWS EC2 SSM Enabled Instance
