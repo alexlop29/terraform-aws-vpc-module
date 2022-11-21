@@ -1,11 +1,3 @@
-variable "create_vpc" {
-  type        = bool
-  description = <<-EOT
-    Set to true to enable VPC creation
-  EOT
-  default     = true
-}
-
 variable "use_ipam_pool" {
   type        = bool
   description = <<-EOT
@@ -85,4 +77,22 @@ variable "vpc_tags" {
   type        = map(string)
   description = "Additional tags for the VPC"
   default     = {}
+}
+
+variable "public_subnets" {
+  description = "A list of public subnets inside the VPC"
+  type        = list(string)
+  default     = []
+}
+
+variable "public_subnet_suffix" {
+  description = "Suffix to append to public subnets name"
+  type        = string
+  default     = "public"
+}
+
+variable "private_subnet_suffix" {
+  description = "Suffix to append to private subnets name"
+  type        = string
+  default     = "private"
 }

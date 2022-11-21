@@ -36,8 +36,6 @@
 # Inputs
 | Name | Description | Type | Default | Required |
 | - | - | - | - | - |
-| create_vpc | Set to true to enable VPC creation | bool | true | no |
-| use_ipam_pool | Set to true to enable IPAM for CIDR allocation | bool | false | no |
 | ipv4_primary_cidr_block | The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length | string | null | no |
 | ipv4_ipam_pool_id | The ID of an IPv4 IPAM pool you want to use for allocating this VPC's CIDR. | string | null | no |
 | ipv4_netmask_length | The netmask length of the IPv4 CIDR you want to allocate to this VPC. Requires specifying a ipv4_ipam_pool_id. | number | null | no |
@@ -57,7 +55,10 @@
 # License
 See LICENSE for full details. 
 
+# Recommended Reading
+- [AWS Documentation: Route Tables](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html)
+
 # Notes from Alex
 - Follows best practices regarding Security Groups (SGs); See https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3
 
-- Go back and add version specific docs in resources
+- Go back and add version-specific docs in resources.
