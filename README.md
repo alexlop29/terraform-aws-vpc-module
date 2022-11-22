@@ -69,3 +69,6 @@ See LICENSE for full details.
 - Add VPC Flow Logs
 
 - Test connectivity with AWS EC2 SSM Enabled Instance
+
+
+HEY LOOK HERE ----> MISSING ROUTE TABLE ASSOCIATIONS; TAKE A LOOK AT THE CLOUDPOSSE MODULE

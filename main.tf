@@ -63,6 +63,13 @@ resource "aws_route" "public_internet_gateway" {
   }
 }
 
+resource "aws_route_table_association" "public" {
+  count = length(var.public_subnets)
+
+  subnet_id = element(aws_subnet.public[*].id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+
 ################################
 # Private Routes
 ################################
@@ -77,6 +84,16 @@ resource "aws_route_table" "private" {
     { "Name" = var.name },
     { "Subnet" = "${var.name}-${var.private_subnet_suffix}" }
   )
+}
+
+# NOTE: (alopez) Based on CloudPosse's module,
+# implement route table association, ingress, egress
+
+resource "aws_route_table_association" "private" {
+  count = length(var.private_subnets)
+
+  subnet_id = element(aws_subnet.private[*].id, count.index)
+  route_table_id = aws_route_table.private.id
 }
 
 ################################
