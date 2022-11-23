@@ -139,3 +139,15 @@ variable "nat_gateway_destination_cidr_block" {
   type        = string
   default     = "0.0.0.0/0"
 }
+
+variable "enable_flow_logs" {
+  description = "Whether or not to build flow log components in Cloudwatch Logs"
+  default     = true
+  type        = bool
+}
+
+variable "cloudwatch_flowlog_retention" {
+  description = "The number of days to retain flowlogs in CLoudwatch Logs. Valid values are: [0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]. A value of `0` will retain indefinitely."
+  type        = number
+  default     = 14
+}

@@ -3,6 +3,7 @@
 ## Scope
 - `terraform-aws-vpc` aides in provisioning an IPv4-based VPC. It does not provide the necessary functionality to build an IPv6-based VPC. The feature can be included upon request.
 - `terraform-aws-vpc` does not support IPAM. The feature can be included upon request.
+- `terraform-aws-vpc` provides access to CloudWatch flow logs. Configuring extended storage to S3 requires a `terraform-aws-s3` module. The feature will be included in a later release.
 
 # Security & Compliance
 - Follows best practices regarding Security Groups (SGs); See https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3
@@ -78,27 +79,20 @@ See LICENSE for full details.
 
 - Add VPC Flow Logs
 
-- Test connectivity with AWS EC2 SSM Enabled Instance
-
 - Include helpful outputs
-
-- AWS' reachability analyzer discovered an error due to the deny in the default NACL. 
 
 - Link back to diagram / https://lucid.app/lucidchart/b4945319-bd0b-4e32-a951-05d4af86ac2e/edit?invitationId=inv_f2194271-1614-42b6-8210-084039d2e2e8&page=0_0#
   - Add NAT config to diagram
+  - Contains examples on fixing the routing tables ---> https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html
 
 - Restructure and organize the resources in main
-
-LEFT OFF OBTAINING ACCESS TO EC2 ---> SSM ACCESS / NEED TO RUN THROUGH REACHABILITY ANALYZER
--DOES THE NAT GATEWAY HAVE TO BE ADDED TO THE ROUTING TABLE
-- MUST RECONFIGURE ROUTE TABLE TO ACCESS THE NAT GATEWAYS
-- Contains examples on fixing the routing tables ---> https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html
 
 - Come back and check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3; 
   - Run Sec Checks
 
-
 Consider adding a local CIDR route to the routing tables. See https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html. 
+
+- LEFT OFF WORKING ON VPC FLOW LOGS
 
 # Testing
 - Deployed VPC, Deployed EC2 in the Public Subnet, Testing Reachability and Routing via Reachability Analyzer
@@ -111,4 +105,3 @@ Consider adding a local CIDR route to the routing tables. See https://docs.aws.a
 
 # Resources 
 - https://aws.amazon.com/premiumsupport/knowledge-center/nat-gateway-vpc-private-subnet/
-
