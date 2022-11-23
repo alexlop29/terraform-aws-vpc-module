@@ -46,10 +46,9 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-    { "Name" = var.name },
-    { "Subnet" = "${var.name}-${var.public_subnet_suffix}" }
+    { "Name" = "${var.name}-${var.public_subnet_suffix}" },
+    { "VPC" = var.name }
   )
-
 }
 
 resource "aws_route" "public_internet_gateway" {
@@ -74,20 +73,14 @@ resource "aws_route_table_association" "public" {
 # Private Routes
 ################################
 
-# NOTE: (alopez) Return and double 
-# check once the routes have been added. 
-
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-    { "Name" = var.name },
-    { "Subnet" = "${var.name}-${var.private_subnet_suffix}" }
+    { "Name" = "${var.name}-${var.private_subnet_suffix}" },
+    { "VPC" = var.name }
   )
 }
-
-# NOTE: (alopez) Based on CloudPosse's module,
-# implement route table association, ingress, egress
 
 resource "aws_route_table_association" "private" {
   count = length(var.private_subnets)
@@ -111,8 +104,8 @@ resource "aws_subnet" "public" {
   cidr_block        = element(var.public_subnets, count.index)
 
   tags = merge(
-    { "Name" = var.name },
-    { "Subnet" = "${var.name}-${var.public_subnet_suffix}" }
+    { "Name" = "${var.name}-${var.public_subnet_suffix}-${count.index}" },
+    { "VPC" = var.name }
   )
 }
 
@@ -130,13 +123,13 @@ resource "aws_subnet" "private" {
   cidr_block        = element(var.private_subnets, count.index)
 
   tags = merge(
-    { "Name" = var.name },
-    { "Subnet" = "${var.name}-${var.private_subnet_suffix}" }
+    { "Name" = "${var.name}-${var.private_subnet_suffix}-${count.index}" },
+    { "VPC" = var.name }
   )
 }
 
 ################################
-# Network ACLs
+# Default Network ACL
 ################################
 
 resource "aws_default_network_acl" "default" {
@@ -144,9 +137,108 @@ resource "aws_default_network_acl" "default" {
 
   default_network_acl_id = aws_vpc.main.default_network_acl_id
 
-  tags = {
-    "Name" = var.name
-  }
+  tags = merge(
+    { "Name" = "${var.name}" },
+    { "VPC" = var.name }
+  )
+}
+
+################################
+# Public Network ACLs
+################################
+
+resource "aws_network_acl" "public" {
+  vpc_id     = aws_vpc.main.id
+
+  subnet_ids = aws_subnet.public[*].id
+
+  tags = merge(
+    { "Name" = "${var.name}-${var.public_subnet_suffix}" },
+    { "VPC" = var.name }
+  )
+}
+
+resource "aws_network_acl_rule" "public_inbound" {
+  count = length(var.public_inbound_acl_rules)
+
+  network_acl_id = aws_network_acl.public.id
+
+  egress          = false
+  rule_number     = var.public_inbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.public_inbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.public_inbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.public_inbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.public_inbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.public_inbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.public_inbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.public_inbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.public_inbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
+resource "aws_network_acl_rule" "public_outbound" {
+  count = length(var.public_outbound_acl_rules)
+
+  network_acl_id = aws_network_acl.public.id
+
+  egress          = true
+  rule_number     = var.public_outbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.public_outbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.public_outbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.public_outbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.public_outbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.public_outbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.public_outbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.public_outbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.public_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
+################################
+# Private Network ACLs
+################################
+
+resource "aws_network_acl" "private" {
+  vpc_id     = aws_vpc.main.id
+
+  subnet_ids = aws_subnet.private[*].id
+
+  tags = merge(
+    { "Name" = "${var.name}-${var.private_subnet_suffix}" },
+    { "VPC" = var.name }
+  )
+}
+
+resource "aws_network_acl_rule" "private_inbound" {
+  count = length(var.private_inbound_acl_rules)
+
+  network_acl_id = aws_network_acl.private.id
+
+  egress          = false
+  rule_number     = var.private_inbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.private_inbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.private_inbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.private_inbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.private_inbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.private_inbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.private_inbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.private_inbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.private_inbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
+resource "aws_network_acl_rule" "private_outbound" {
+  count = local.create_vpc && var.private_dedicated_network_acl && length(var.private_subnets) > 0 ? length(var.private_outbound_acl_rules) : 0
+
+  network_acl_id = aws_network_acl.private[0].id
+
+  egress          = true
+  rule_number     = var.private_outbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.private_outbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.private_outbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.private_outbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.private_outbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.private_outbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.private_outbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.private_outbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.private_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
 }
 
 ################################
@@ -156,7 +248,8 @@ resource "aws_default_network_acl" "default" {
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
-    "Name" = var.name 
-  }
+  tags = merge(
+    { "Name" = "${var.name}" },
+    { "VPC" = var.name }
+  )
 }
