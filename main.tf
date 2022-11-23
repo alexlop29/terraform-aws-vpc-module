@@ -74,6 +74,8 @@ resource "aws_route_table_association" "public" {
 ################################
 
 resource "aws_route_table" "private" {
+  count = length(var.azs)
+
   vpc_id = aws_vpc.main.id
 
   tags = merge(
@@ -83,10 +85,10 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count = length(var.private_subnets)
+  count = length(var.azs)
 
   subnet_id = element(aws_subnet.private[*].id, count.index)
-  route_table_id = aws_route_table.private.id
+  route_table_id = element(aws_route_table.private[*].id, count.index)
 }
 
 ################################
@@ -225,9 +227,9 @@ resource "aws_network_acl_rule" "private_inbound" {
 }
 
 resource "aws_network_acl_rule" "private_outbound" {
-  count = local.create_vpc && var.private_dedicated_network_acl && length(var.private_subnets) > 0 ? length(var.private_outbound_acl_rules) : 0
+  count = length(var.private_outbound_acl_rules)
 
-  network_acl_id = aws_network_acl.private[0].id
+  network_acl_id = aws_network_acl.private.id
 
   egress          = true
   rule_number     = var.private_outbound_acl_rules[count.index]["rule_number"]
@@ -252,4 +254,47 @@ resource "aws_default_security_group" "default" {
     { "Name" = "${var.name}" },
     { "VPC" = var.name }
   )
+}
+
+#############
+# NAT Gateway
+#############
+
+resource "aws_eip" "nat_eip" {
+  count = length(var.azs)
+
+  vpc = true
+
+  tags = merge(
+    { "Name" = "${var.name}-nat-${count.index}" },
+    { "VPC" = var.name }
+  )
+
+  depends_on = [aws_internet_gateway.default]
+}
+
+resource "aws_nat_gateway" "nat" {
+  count = length(var.azs)
+
+  allocation_id = element(aws_eip.nat_eip.*.id, count.index)
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
+
+  tags = merge(
+    { "Name" = "${var.name}-nat-${count.index}" },
+    { "VPC" = var.name }
+  )
+
+  depends_on = [aws_internet_gateway.default]
+}
+
+resource "aws_route" "private_nat_gateway" {
+  count = length(var.azs)
+
+  route_table_id         =  element(aws_route_table.private[*].id, count.index)
+  destination_cidr_block = var.nat_gateway_destination_cidr_block
+  nat_gateway_id         = element(aws_nat_gateway.nat[*].id, count.index)
+
+  timeouts {
+    create = "5m"
+  }
 }
