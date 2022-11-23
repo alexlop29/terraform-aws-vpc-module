@@ -151,3 +151,15 @@ variable "cloudwatch_flowlog_retention" {
   type        = number
   default     = 14
 }
+
+variable "account_id" {
+  description = "Provide the account number of an AWS"
+  type        = string
+  default     = "748954057513"
+}
+
+variable "region" {
+  description = "Provide the desired region"
+  type        = string
+  default     = ""
+}

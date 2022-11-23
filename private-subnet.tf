@@ -16,7 +16,7 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "private" {
   count = length(var.azs)
 
-  subnet_id = element(aws_subnet.private[*].id, count.index)
+  subnet_id      = element(aws_subnet.private[*].id, count.index)
   route_table_id = element(aws_route_table.private[*].id, count.index)
 }
 
@@ -26,7 +26,7 @@ resource "aws_route_table_association" "private" {
 ################################################################
 
 resource "aws_network_acl" "private" {
-  vpc_id     = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
 
   subnet_ids = aws_subnet.private[*].id
 

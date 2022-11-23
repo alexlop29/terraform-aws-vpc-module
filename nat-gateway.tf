@@ -32,7 +32,7 @@ resource "aws_nat_gateway" "nat" {
 resource "aws_route" "private_nat_gateway" {
   count = length(var.azs)
 
-  route_table_id         =  element(aws_route_table.private[*].id, count.index)
+  route_table_id         = element(aws_route_table.private[*].id, count.index)
   destination_cidr_block = var.nat_gateway_destination_cidr_block
   nat_gateway_id         = element(aws_nat_gateway.nat[*].id, count.index)
 

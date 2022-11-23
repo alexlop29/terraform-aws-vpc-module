@@ -25,7 +25,7 @@ resource "aws_route" "public_internet_gateway" {
 resource "aws_route_table_association" "public" {
   count = length(var.public_subnets)
 
-  subnet_id = element(aws_subnet.public[*].id, count.index)
+  subnet_id      = element(aws_subnet.public[*].id, count.index)
   route_table_id = aws_route_table.public.id
 }
 
@@ -35,7 +35,7 @@ resource "aws_route_table_association" "public" {
 ################################################################
 
 resource "aws_network_acl" "public" {
-  vpc_id     = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
 
   subnet_ids = aws_subnet.public[*].id
 

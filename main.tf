@@ -54,7 +54,7 @@ resource "aws_default_network_acl" "default" {
 }
 
 ################################################################
-# Security Group
+# Default Security Group
 ################################################################
 
 resource "aws_default_security_group" "default" {

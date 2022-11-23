@@ -1,15 +1,54 @@
+
+
+# Notes from Alex
+
+- Add VPC Flow Logs
+
+- Include helpful outputs
+
+- Link back to diagram / https://lucid.app/lucidchart/b4945319-bd0b-4e32-a951-05d4af86ac2e/edit?invitationId=inv_f2194271-1614-42b6-8210-084039d2e2e8&page=0_0#
+  - Add NAT config to diagram
+  - Contains examples on fixing the routing tables ---> https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html
+
+- Come back and check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3; 
+  - Run Sec Checks
+
+Consider adding a local CIDR route to the routing tables. See https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html. 
+
+- LEFT OFF WORKING ON VPC FLOW LOGS
+
+# Testing
+- Deployed VPC, Deployed EC2 in the Public Subnet, Testing Reachability and Routing via Reachability Analyzer
+  - Provide screen captures of successfully reaching the public instance, blocked access to the private instance even with a public ip
+
 # terraform-aws-vpc
+
+- [terraform-aws-vpc](#terraform-aws-vpc)
+  * [Scope](#scope)
+  * [Security & Compliance](#security---compliance)
+- [Examples](#examples)
+- [Requirements](#requirements)
+  * [Providers](#providers)
+  * [Modules](#modules)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [License](#license)
 
 ## Scope
 - `terraform-aws-vpc` aides in provisioning an IPv4-based VPC. It does not provide the necessary functionality to build an IPv6-based VPC. The feature can be included upon request.
 - `terraform-aws-vpc` does not support IPAM. The feature can be included upon request.
 - `terraform-aws-vpc` provides access to CloudWatch flow logs. Configuring extended storage to S3 requires a `terraform-aws-s3` module. The feature will be included in a later release.
+- `terraform-aws-vpc` does not include automated alerting of KMS keys (e.g. monitoring the key rotation process, )
 
-# Security & Compliance
+## Security & Compliance
 - Follows best practices regarding Security Groups (SGs); See https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3
 - Each subnet in your VPC must be associated with a network ACL. If you don't explicitly associate a subnet with a network ACL, the subnet is automatically associated with the default network ACL. - https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html
 - Each NAT gateway is created in a specific Availability Zone and implemented with redundancy in that zone. There is a quota on the number of NAT gateways that you can create in each Availability Zone. For more information, see Amazon VPC quotas.
   - If you have resources in multiple Availability Zones and they share one NAT gateway, and if the NAT gateway’s Availability Zone is down, resources in the other Availability Zones lose internet access. 
+- Encryption at rest - AWS KMS generates key material for AWS KMS keys in FIPS 140-2 Level 2–compliant hardware security modules (HSMs).
+  - See https://docs.aws.amazon.com/kms/latest/developerguide/kms-compliance.html for additional details regarding SOC2 reports.
+  - SYMMETRIC_DEFAULT currently represents AES-256-GCM, a symmetric algorithm based on Advanced Encryption Standard (AES) in Galois Counter Mode (GCM) with 256-bit keys, an industry standard for secure encryption. 
 
 # Examples
 
@@ -20,14 +59,14 @@
 | terraform | >= 1.3.4 |
 | aws | >= 4.39.0 |
 
-# Providers
+## Providers
 
 | Name | Version |
 | - | - |
 | aws | >= 4.39.0 |
 
 
-# Modules
+## Modules
 (None)
 
 # Resources
@@ -62,7 +101,6 @@
 | private_inbound_acl_rules | Private subnets inbound network ACLs | list(map(string)) | [{ all inbound}]| no |
 | private_outbound_acl_rules | Private subnets outbound network ACLs | list(map(string)) | [{ all inbound}]| no |
  
- 
 # Outputs
 | Name | Description |
 | - | - |
@@ -70,38 +108,4 @@
 | vpc_arn | Amazon Resource Name (ARN) of VPC |
 
 # License
-See LICENSE for full details. 
-
-# Recommended Reading
-- [AWS Documentation: Route Tables](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html)
-
-# Notes from Alex
-
-- Add VPC Flow Logs
-
-- Include helpful outputs
-
-- Link back to diagram / https://lucid.app/lucidchart/b4945319-bd0b-4e32-a951-05d4af86ac2e/edit?invitationId=inv_f2194271-1614-42b6-8210-084039d2e2e8&page=0_0#
-  - Add NAT config to diagram
-  - Contains examples on fixing the routing tables ---> https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html
-
-- Restructure and organize the resources in main
-
-- Come back and check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3; 
-  - Run Sec Checks
-
-Consider adding a local CIDR route to the routing tables. See https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html. 
-
-- LEFT OFF WORKING ON VPC FLOW LOGS
-
-# Testing
-- Deployed VPC, Deployed EC2 in the Public Subnet, Testing Reachability and Routing via Reachability Analyzer
-  - Provide screen captures of successfully reaching the public instance, blocked access to the private instance even with a public ip
-
-# Github
-- https://github.com/cloudposse/terraform-aws-vpc
-- https://github.com/terraform-aws-modules/terraform-aws-vpc
-- https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork
-
-# Resources 
-- https://aws.amazon.com/premiumsupport/knowledge-center/nat-gateway-vpc-private-subnet/
+Refer to LICENSE for additional details.
