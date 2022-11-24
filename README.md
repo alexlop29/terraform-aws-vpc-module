@@ -1,41 +1,30 @@
 # Notes from Alex
-
-Working on:
-- Deploy basic vpc
-- Write a note on the tagging strategy in the module
-
-NOTE:
-- Unable to set VPC Flow Logs
-- NOTE: (alopez) Potential Bug; What if a user specifies 3 subnets, 2 AZs.
-
-# Testing
-- Deployed VPC, Deployed EC2 in the Public Subnet, Testing Reachability and Routing via Reachability Analyzer
-  - Provide screen captures of successfully reaching the public instance, blocked access to the private instance even with a public ip
+- Working on Flow Logs Error
+- Add Checkov, Dependabot Checks
+- Add security and compliance config
 
 # terraform-aws-vpc
 
-- [terraform-aws-vpc](#terraform-aws-vpc)
-  * [Scope](#scope)
-  * [Security & Compliance](#security---compliance)
-- [Examples](#examples)
-- [Requirements](#requirements)
-  * [Providers](#providers)
-  * [Modules](#modules)
-- [Resources](#resources)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [License](#license)
-
-## Scope
-- `terraform-aws-vpc` aides in provisioning an IPv4-based VPC. It does not provide the necessary functionality to build an IPv6-based VPC. The feature can be included upon request.
-- `terraform-aws-vpc` does not support IPAM. The feature can be included upon request.
-- `terraform-aws-vpc` provides access to CloudWatch flow logs. Configuring extended storage to S3 requires a `terraform-aws-s3` module. The feature will be included in a later release.
-- `terraform-aws-vpc` does not include automated alerting of KMS keys (e.g. monitoring the key rotation process, )
-
-## Security & Compliance
+# Security & Compliance
 
 
 # Examples
+```
+module "vpc" {
+  source = "../../"
+
+  name                    = "prod"
+  ipv4_primary_cidr_block = "192.168.2.0/24"
+  azs                     = ["us-east-2a", "us-east-2b"]
+  public_subnets          = ["192.168.2.0/26", "192.168.2.64/26"]
+  private_subnets         = ["192.168.2.128/26", "192.168.2.192/26"]
+  enable_dns_hostnames    = true
+  enable_dns_support      = true
+  enable_flow_logs        = true
+  region                  = "us-east-2"
+  account_id              = "123456789000"
+}
+```
 
 # Requirements
 
