@@ -152,9 +152,13 @@ variable "private_outbound_acl_rules" {
   ]
 }
 
+################################################################
+# VPC Flow Logs
+################################################################
+
 variable "enable_flow_logs" {
   description = "Whether or not to build flow log components in Cloudwatch Logs"
-  default     = true
+  default     = false
   type        = bool
 }
 
@@ -167,11 +171,11 @@ variable "cloudwatch_flowlog_retention" {
 variable "account_id" {
   description = "Provide the AWS account number"
   type        = string
-  default     = "748954057513"
+  default     = ""
 }
 
 variable "region" {
   description = "Provide the desired region"
   type        = string
-  default     = "us-east-2"
+  default     = ""
 }

@@ -2,12 +2,17 @@
 # VPC Flow Logs
 ######################################################
 
-resource "aws_cloudwatch_log_group" "flowlogs" {
+resource "aws_cloudwatch_log_group" "main" {
   count = var.enable_flow_logs ? 1 : 0
 
   name              = "${var.name}-flowlogs"
   retention_in_days = var.cloudwatch_flowlog_retention
   kms_key_id        = aws_kms_key.main[count.index].arn
+
+  tags = merge({
+    "Name"        = "${var.name}",
+    "Environment" = var.environment
+  })
 }
 
 resource "aws_kms_key" "main" {
@@ -57,10 +62,10 @@ resource "aws_kms_key" "main" {
 }
   EOF
 
-  tags = merge(
-    { "Name" = "${var.name}-vpc-kms" },
-    { "VPC" = var.name }
-  )
+  tags = merge({
+    "Name"        = "${var.name}",
+    "Environment" = var.environment
+  })
 }
 
 resource "aws_kms_alias" "main" {
@@ -70,7 +75,7 @@ resource "aws_kms_alias" "main" {
   target_key_id = aws_kms_key.main[count.index].key_id
 }
 
-resource "aws_iam_role" "flowlogs" {
+resource "aws_iam_role" "main" {
   count = var.enable_flow_logs ? 1 : 0
 
   name        = "${var.name}-vpc-flowlogs"
@@ -91,18 +96,17 @@ resource "aws_iam_role" "flowlogs" {
   } 
   EOF
 
-  tags = merge(
-    { "Name" = "${var.name}-vpc-flowlogs" },
-    { "VPC" = var.name }
-  )
-
+  tags = merge({
+    "Name"        = "${var.name}-vpc-flowlogs",
+    "Environment" = var.environment
+  })
 }
 
-resource "aws_iam_role_policy" "flowlogs" {
+resource "aws_iam_role_policy" "main" {
   count = var.enable_flow_logs ? 1 : 0
 
   name = "${var.name}-vpc-flowlogs-policy"
-  role = aws_iam_role.flowlogs[0].id
+  role = aws_iam_role.main[count.index].id
 
   policy = <<EOF
 {
@@ -125,12 +129,12 @@ resource "aws_iam_role_policy" "flowlogs" {
 
 }
 
-resource "aws_flow_log" "flowlogs" {
+resource "aws_flow_log" "main" {
   count = var.enable_flow_logs ? 1 : 0
 
-  iam_role_arn             = aws_iam_role.flowlogs[count.index].arn
+  iam_role_arn             = aws_iam_role.main[count.index].arn
   log_destination_type     = "cloud-watch-logs"
-  log_destination          = aws_cloudwatch_log_group.flowlogs[count.index].arn
+  log_destination          = aws_cloudwatch_log_group.main[count.index].arn
   traffic_type             = "ALL"
   vpc_id                   = aws_vpc.main.id
   max_aggregation_interval = "60"
