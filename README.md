@@ -1,21 +1,22 @@
-
-
 # Notes from Alex
 
-- Add VPC Flow Logs
-
 - Include helpful outputs
-
-- Link back to diagram / https://lucid.app/lucidchart/b4945319-bd0b-4e32-a951-05d4af86ac2e/edit?invitationId=inv_f2194271-1614-42b6-8210-084039d2e2e8&page=0_0#
-  - Add NAT config to diagram
-  - Contains examples on fixing the routing tables ---> https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html
 
 - Come back and check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-4.3; 
   - Run Sec Checks
 
-Consider adding a local CIDR route to the routing tables. See https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html. 
+Working on:
+- Updating the tagging strategy
+- As I tag, I will review the configuration and compare the sec checks / terraform guidelines
+- Update variables
+- Deploy basic vpc
+- Write a note on the tagging strategy in the module
 
-- LEFT OFF WORKING ON VPC FLOW LOGS
+LEFT OFF UDPATING THE VPC FLOW LOGS TF
+
+NOTE:
+- Unable to set VPC Flow Logs
+- NOTE: (alopez) Potential Bug; What if a user specifies 3 subnets, 2 AZs.
 
 # Testing
 - Deployed VPC, Deployed EC2 in the Public Subnet, Testing Reachability and Routing via Reachability Analyzer
@@ -49,6 +50,8 @@ Consider adding a local CIDR route to the routing tables. See https://docs.aws.a
 - Encryption at rest - AWS KMS generates key material for AWS KMS keys in FIPS 140-2 Level 2–compliant hardware security modules (HSMs).
   - See https://docs.aws.amazon.com/kms/latest/developerguide/kms-compliance.html for additional details regarding SOC2 reports.
   - SYMMETRIC_DEFAULT currently represents AES-256-GCM, a symmetric algorithm based on Advanced Encryption Standard (AES) in Galois Counter Mode (GCM) with 256-bit keys, an industry standard for secure encryption. 
+- Network Address Usage (NAU) is a metric applied to resources in your virtual network to help you plan for and monitor the size of your VPC. There is no cost to monitor NAU. 
+
 
 # Examples
 
@@ -73,12 +76,15 @@ Consider adding a local CIDR route to the routing tables. See https://docs.aws.a
 
 | Name | Type |
 | - | - |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/cloudwatch_log_group) | resource |
 | [aws_default_network_acl](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/default_network_acl) | resource |
-| [aws_network_acl](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/network_acl) | resource |
-| [aws_network_acl_rule](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/network_acl_rule) | resource |
 | [aws_default_route_table](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/default_route_table) | resource |
 | [aws_default_security_group](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/default_security_group) | resource |
+| [aws_eip](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/eip) | resource |
 | [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/internet_gateway) | resource |
+| [aws_nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/nat_gateway) | resource|
+| [aws_network_acl](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/network_acl) | resource |
+| [aws_network_acl_rule](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/network_acl_rule) | resource |
 | [aws_route](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/route) | resource |
 | [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/route_table) | resource |
 | [aws_route_table_association](https://registry.terraform.io/providers/hashicorp/aws/4.39.0/docs/resources/route_table_association) | resource |
@@ -88,18 +94,25 @@ Consider adding a local CIDR route to the routing tables. See https://docs.aws.a
 # Inputs
 | Name | Description | Type | Default | Required |
 | - | - | - | - | - |
-| name | Name to be used on all the resources as identifier | string | "" | no |
-| ipv4_primary_cidr_block | The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length | string | null | no |
+| ipv4_primary_cidr_block | The IPv4 CIDR block for the VPC | string | null | yes |
 | instance_tenancy | A tenancy option for instances launched into the VPC | string | default | no |
-| enable_dns_hostnames | A boolean flag to enable/disable DNS hostnames in the VPC | boolean | false | no |
 | enable_dns_support | A boolean flag to enable/disable DNS support in the VPC | boolean | true | no |
-| azs | A list of availability zones names or ids in the region | list(string) | [] | no |
-| public_subnets | A list of public subnets inside the VPC | list(string) | [] | no |
-| private_subnets | A list of private subnets inside the VPC | list(string) | [] | no |
+| enable_dns_hostnames | A boolean flag to enable/disable DNS hostnames in the VPC | boolean | false | no |
+| name | Name to be used on all the resources as identifier | string | "" | yes |
+| environment | Environment in which this network resides (e.g. dev/prod) | string | "dev" | no |
+| public_subnet_suffix | Suffix to append to public subnets | string | "public" | no |
+| public_subnets | A list of public subnets inside the VPC | list(string) | [] | yes |
 | public_inbound_acl_rules | Public subnets inbound network ACLs | list(map(string)) | [{ all inbound}]| no |
-| public_outbound_acl_rules | Public subnets outbound network ACLs | list(map(string)) | [{ all inbound}]| no |
-| private_inbound_acl_rules | Private subnets inbound network ACLs | list(map(string)) | [{ all inbound}]| no |
+| public_outbound_acl_rules | Public subnets outbound network ACLs | list(map(string)) | [{ all outbound}]| no |
+| azs | A list of availability zones names or ids in the region | list(string) | [] | yes |
+| private_subnet_suffix | Suffix to append to private subnets | string | "private" | no |
+| private_subnets | A list of private subnets inside the VPC | list(string) | [] | no |
+| private_inbound_acl_rules | Private subnets inbound network ACLs | list(map(string)) | [{ all inbound}]| yes |
 | private_outbound_acl_rules | Private subnets outbound network ACLs | list(map(string)) | [{ all inbound}]| no |
+| enable_flow_logs | Whether or not to build flow log components in Cloudwatch Logs | bool | true | no |
+| cloudwatch_flowlog_retention | The number of days to retain flowlogs in CLoudwatch Logs | number | 14 | no |
+| account_id | Provide the AWS account number | string | "" | yes |
+| region | Provide the desired region | string | "" | yes |
  
 # Outputs
 | Name | Description |
