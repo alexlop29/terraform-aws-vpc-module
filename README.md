@@ -1,7 +1,5 @@
 # Notes from Alex
-- Working on Flow Logs Error
 - Add Checkov, Dependabot Checks; noT WORKING COULD BE DUE TO MAIN FILE
-- Add security and compliance config
 
 # terraform-aws-vpc
 
