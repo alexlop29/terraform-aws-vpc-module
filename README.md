@@ -1,5 +1,7 @@
 # terraform-aws-vpc
 
+<img width="960" alt="Screen Shot 2022-11-27 at 5 29 35 PM" src="https://user-images.githubusercontent.com/34544005/204163107-5fa6af46-62cc-4809-91df-7bf6598e7029.png">
+
 # Examples
 ```
 module "vpc" {
