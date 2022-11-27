@@ -121,7 +121,7 @@ resource "aws_iam_role_policy" "main" {
         "logs:DescribeLogStreams"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:logs:${var.region}:${var.account_id}:log-group:${var.name}-flowlogs"
+      "Resource": "arn:aws:logs:${var.region}:${var.account_id}:log-group:*"
     }
   ]
 }

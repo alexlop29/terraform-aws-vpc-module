@@ -1,7 +1,8 @@
 module "vpc" {
   source = "../../"
 
-  name                    = "prod"
+  name                    = "jenkins"
+  environment             = "prod"
   ipv4_primary_cidr_block = "192.168.2.0/24"
   azs                     = ["us-east-2a", "us-east-2b"]
   public_subnets          = ["192.168.2.0/26", "192.168.2.64/26"]
