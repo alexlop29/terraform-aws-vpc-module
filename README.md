@@ -1,10 +1,4 @@
-# Notes from Alex
-- Add Checkov, Dependabot Checks; noT WORKING COULD BE DUE TO MAIN FILE
-
 # terraform-aws-vpc
-
-# Security & Compliance
-
 
 # Examples
 ```
