@@ -1,7 +1,7 @@
 module "vpc" {
   source = "../../"
 
-  name                    = "jenkins"
+  name                    = "sample"
   environment             = "prod"
   ipv4_primary_cidr_block = "192.168.2.0/24"
   azs                     = ["us-east-2a", "us-east-2b"]
@@ -11,5 +11,5 @@ module "vpc" {
   enable_dns_support      = true
   enable_flow_logs        = true
   region                  = "us-east-2"
-  account_id              = "748954057513"
+  account_id              = "1234456789"
 }
